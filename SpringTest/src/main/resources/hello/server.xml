@@ -1,0 +1,29 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:util="http://www.springframework.org/schema/util">
+
+	<bean id="paymentImpl" class="hello.remote.server.PayServiceImpl"/>
+	<bean id="httpPaymentService" class="org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter">
+		<property name="service">
+			<ref bean="paymentImpl"></ref>
+		</property>
+		<property name="serviceInterface">
+			<value>hello.remote.share.PayService</value>
+		</property>
+	</bean>
+	<bean id="httpServer" class="org.springframework.remoting.support.SimpleHttpServerFactoryBean">
+        <property name="contexts">
+            <util:map>
+                <entry key="/Pay">
+                	<ref bean="httpPaymentService"/>
+                </entry>
+            </util:map>
+        </property>
+        <property name="port" value="8888"/>
+    </bean>
+ </beans>
+    

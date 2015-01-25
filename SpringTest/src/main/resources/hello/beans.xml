@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ctx="http://www.springframework.org/schema/context"
+xmlns:http="http://servicemix.apache.org/http/1.0" xmlns:bar="http://testserver"
+xsi:schemaLocation="http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context.xsd
+http://servicemix.apache.org/http/1.0
+http://servicemix.apache.org/schema/servicemix-http-3.2.3.xsd">
+	<bean id="service" class="hello.impl.MessageServiceImpl" />
+	<bean id="newService" class="hello.impl.MessageServiceNew" />
+	<bean id="printer" class="hello.MessagePrinter">
+		<constructor-arg>
+			<ref bean="service"/>
+		</constructor-arg>
+		<property name="messageService">
+			<ref bean="newService"/>
+		</property>
+	</bean>
+	
+	<!--  remote -->
+	<bean id="paymentService" class="org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean">
+		<property name="serviceUrl">
+			<value>http://127.0.0.1:8888/hello/pay.service</value>
+		</property>
+		<property name="serviceInterface">
+			<value>hello.remote.share.PayService</value>
+		</property>
+	</bean>
+	
+	<!--  AOP -->
+	<bean id="safeWayTarget" class="hello.aop.SafeWay"></bean>
+	<bean id="welcomeAdvice" class="hello.aop.before.WelcomeAdvice" />
+	<bean id="invocation" class="hello.aop.before.Invocation" />
+	<bean id="byeAdvice" class="hello.aop.before.ByeAdvice" />
+	<bean id="safeWay" class="org.springframework.aop.framework.ProxyFactoryBean">
+		<property name="proxyInterfaces">
+			<value>hello.aop.SuperMarket</value>
+		</property>
+		<property name="interceptorNames">
+			<list>
+				<value>welcomeAdvice</value>
+				<value>byeAdvice</value>
+			</list>
+		</property>
+		<property name="target">
+			<ref bean="safeWayTarget"/>
+		</property>
+	</bean>
+</beans>

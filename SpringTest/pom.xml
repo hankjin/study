@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.hankjohn.spring</groupId>
+  <artifactId>SpringTest</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+  	<dependency>
+  		<groupId>org.springframework</groupId>
+  		<artifactId>spring-context</artifactId>
+  		<version>4.1.4.RELEASE</version>
+  	</dependency>
+  	<dependency>
+            <groupId>org.eclipse.jetty.aggregate</groupId>
+            <artifactId>jetty-all</artifactId>
+            <version>8.0.4.v20111024</version>
+        </dependency>
+        
+  	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-remoting</artifactId>
+		<version>2.0.8</version>
+	</dependency>
+  </dependencies>
+  <build>
+<plugins>
+  <plugin>
+  <groupId>org.eclipse.jetty</groupId>
+  <artifactId>jetty-maven-plugin</artifactId>
+  <version>9.2.8-SNAPSHOT</version>
+</plugin>
+</plugins>
+</build>
+</project>
