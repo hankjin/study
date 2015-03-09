@@ -33,6 +33,18 @@
         <java classname="net.hankjohn.je.Test">
             <classpath refid="project.class.path"/>
         </java>
+        <java classname="net.hankjohn.je.Primitive">
+            <classpath refid="project.class.path"/>
+        </java>
+        <java classname="net.hankjohn.je.Ser">
+            <classpath refid="project.class.path"/>
+        </java>
+        <java classname="net.hankjohn.je.MyBinding">
+            <classpath refid="project.class.path"/>
+        </java>
+        <java classname="net.hankjohn.je.M2M">
+            <classpath refid="project.class.path"/>
+        </java>
     </target>
 
     <target name="clean">
