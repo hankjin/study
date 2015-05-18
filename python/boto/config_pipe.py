@@ -4,8 +4,8 @@ import json
 SCHEDULE = {
         "fields": [
             {
-                "stringValue": "FIRST_ACTIVATION_DATE_TIME", 
-                "key": "startAt"
+                "stringValue": "2015-05-18T08:36:00", 
+                "key": "startDateTime"
                 }, 
             {
                 "stringValue": "1 days", 
@@ -20,34 +20,34 @@ SCHEDULE = {
         "name": "Every 1 day"
         } 
 DEFAULT_CONFIG =  {
-            "fields": [
-                {
-                    "stringValue": "CASCADE", 
-                    "key": "failureAndRerunMode"
+        "fields": [
+            {
+                "stringValue": "CASCADE", 
+                "key": "failureAndRerunMode"
                 }, 
-                {
-                    "stringValue": "cron", 
-                    "key": "scheduleType"
+            {
+                "stringValue": "cron", 
+                "key": "scheduleType"
                 }, 
-                {
-                    "refValue": "DefaultSchedule", 
-                    "key": "schedule"
+            {
+                "refValue": "DefaultSchedule", 
+                "key": "schedule"
                 }, 
-                {
-                    "stringValue": "s3://ddb.backup.log/", 
-                    "key": "pipelineLogUri"
+            {
+                "stringValue": "s3://ddb.backup.log/", 
+                "key": "pipelineLogUri"
                 }, 
-                {
-                    "stringValue": "DataPipelineDefaultRole", 
-                    "key": "role"
+            {
+                "stringValue": "DataPipelineDefaultRole", 
+                "key": "role"
                 }, 
-                {
-                    "stringValue": "DataPipelineDefaultResourceRole", 
-                    "key": "resourceRole"
+            {
+                "stringValue": "DataPipelineDefaultResourceRole", 
+                "key": "resourceRole"
                 }
             ], 
-            "id": "Default", 
-            "name": "Default"
+        "id": "Default", 
+        "name": "Default"
         }
 EMR_CLUSTER = '''{
             "fields": [
@@ -80,14 +80,14 @@ EMR_CLUSTER = '''{
             "name": "{EMRID}"
         }'''
 DATA_FORMAT = {
-            "fields": [
-                {
-                    "stringValue": "DynamoDBExportDataFormat", 
-                    "key": "type"
+        "fields": [
+            {
+                "stringValue": "DynamoDBExportDataFormat", 
+                "key": "type"
                 }
             ], 
-            "id": "DDBExportFormat", 
-            "name": "DDBExportFormat"
+        "id": "DDBExportFormat", 
+        "name": "DDBExportFormat"
         }
 
 TABLE_SOURCE = '''{
@@ -243,12 +243,12 @@ def getTableObjects(tableName):
     result = []
     for item_template in templates:
         item = item_template \
-            .replace('{TABLENAME}', tableName) \
-            .replace('{tablename}', tableName.lower()) \
-            .replace('{S3PREFIX}', config.S3PREFIX) \
-            .replace('{SNSURL}', config.SNSURL) \
-            .replace('{EMRID}', getEMRId(tableName)) \
-            .replace('{REGION}', config.REGION)
+                .replace('{TABLENAME}', tableName) \
+                .replace('{tablename}', tableName.lower()) \
+                .replace('{S3PREFIX}', config.S3PREFIX) \
+                .replace('{SNSURL}', config.SNSURL) \
+                .replace('{EMRID}', getEMRId(tableName)) \
+                .replace('{REGION}', config.REGION)
         result.append(json.loads(item))
     return result
 

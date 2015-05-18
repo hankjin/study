@@ -2,12 +2,15 @@
 TABLES=[
         'TableA',
         'TableB',
-        'TableC'
+        'TableC',
+        'TableD',
+        'TableE',
+        'TableF',
         ]
 # Region
 REGION='us-east-1'
 # Share EMR or one EMR for each table
-SHARE_EMR=False
+SHARE_EMR=True
 # Name of the data pipeline
 PIPE_NAME='BackupDDB'
 # S3 prefix of the backup tables.
