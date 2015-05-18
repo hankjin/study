@@ -115,7 +115,7 @@ TABLE_SOURCE = '''{
 TABLE_DEST = '''{
             "fields": [
                 {
-                    "stringValue": "s3://{S3PREFIX}.{REGION}.{tablename}/", 
+                    "stringValue": "s3://{S3PREFIX}.{REGION}.{tablename}/#{format(@scheduledStartTime, 'YYYY-MM-dd-HH-mm-ss')}",
                     "key": "directoryPath"
                 }, 
                 {
@@ -215,7 +215,7 @@ TABLE_NOTIFY_FAIL = '''{
                 }
             ], 
             "id": "ActionId_{TABLENAME}_FAIL", 
-            "name": "TableAFailAction"
+            "name": "{TABLENAME}_Fail_Action"
         }'''
 
 def getTableObjects(tableName):
