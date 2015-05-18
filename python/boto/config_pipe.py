@@ -49,7 +49,7 @@ DEFAULT_CONFIG =  {
             "id": "Default", 
             "name": "Default"
         }
-EMR_CLUSTER = {
+EMR_CLUSTER = '''{
             "fields": [
                 {
                     "stringValue": "2 Hours", 
@@ -76,9 +76,9 @@ EMR_CLUSTER = {
                     "key": "type"
                 }
             ], 
-            "id": "EmrClusterForBackup", 
-            "name": "EmrClusterForBackup"
-        } 
+            "id": "{EMRID}",
+            "name": "{EMRID}"
+        }'''
 DATA_FORMAT = {
             "fields": [
                 {
@@ -141,7 +141,7 @@ TABLE_ACTIVITY = '''{
                     "key": "input"
                 }, 
                 {
-                    "refValue": "EmrClusterForBackup", 
+                    "refValue": "{EMRID}",
                     "key": "runsOn"
                 }, 
                 {
@@ -217,7 +217,21 @@ TABLE_NOTIFY_FAIL = '''{
             "id": "ActionId_{TABLENAME}_FAIL", 
             "name": "{TABLENAME}_Fail_Action"
         }'''
-
+def getEMRId(tableName):
+    emrId='EmrClusterForBackup'
+    if not config.SHARE_EMR:
+        emrId+=tableName
+    return emrId
+def getEMRObjects(tables):
+    result = []
+    if config.SHARE_EMR:
+        emrs = [None]
+    else:
+        emrs = tables
+    for tableName in emrs:
+        emr_cluster = json.loads(EMR_CLUSTER.replace('{EMRID}', getEMRId(tableName)))
+        result.append(emr_cluster)
+    return result
 def getTableObjects(tableName):
     templates = [
             TABLE_SOURCE,
@@ -233,6 +247,8 @@ def getTableObjects(tableName):
             .replace('{tablename}', tableName.lower()) \
             .replace('{S3PREFIX}', config.S3PREFIX) \
             .replace('{SNSURL}', config.SNSURL) \
+            .replace('{EMRID}', getEMRId(tableName)) \
             .replace('{REGION}', config.REGION)
         result.append(json.loads(item))
     return result
+

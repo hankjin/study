@@ -13,11 +13,11 @@ def createPipe():
     pipelineObjects = [
                 config_pipe.SCHEDULE, # run once per day
                 config_pipe.DEFAULT_CONFIG, # role, log location
-                config_pipe.EMR_CLUSTER, # EMR cluster to run hive copy
                 config_pipe.DATA_FORMAT, # format to do copy
                 ]
     for tableName in config.TABLES:
         pipelineObjects.extend(config_pipe.getTableObjects(tableName))
+    pipelineObjects.extend(config_pipe.getEMRObjects(config.TABLES))
     
     open('backup.json','w').write(json.dumps(pipelineObjects, indent=4))
     conn.put_pipeline_definition(
