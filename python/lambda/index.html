@@ -1,0 +1,39 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script>
+    var tables = [
+    'Lambda',
+    'TableA',
+    'TableB',
+    'TableC',
+    'TableD',
+    ];
+    function loadData() {
+        $.each(tables, function(i, tableName) {
+            var $myDiv = $("#"+tableName);
+            if (!$myDiv.length) {
+                $('<tr><td>'+tableName+'</td><td id="'+tableName+'"></td></tr>').appendTo('#data');
+            }
+            $("#"+tableName).load(tableName);
+        });
+        jQuery("tr:odd").addClass("odd");
+    };
+    $(document).ready(function() {
+        loadData();
+    });
+</script>
+<style>
+    tr.odd {
+        background: #EFEFEF;
+    }
+</style>
+
+<h1>Last backup time of each table</h1>
+<hr>
+
+<table id="data">
+    <tr>
+        <th>Backup Id</th>
+        <th>Last Backup</th>
+    </tr>
+</table>
+
