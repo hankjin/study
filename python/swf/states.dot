@@ -1,0 +1,26 @@
+digraph G{
+    FreeIpActivity->FreeIpHumanActivity[label="Mistake"];
+    FreeIpActivity->ResolveTicketsActivity[label="Confirm"];
+    CheckVIPActivity->FixVIPHumanActivity[label="Fail"];
+    CheckVIPActivity->ActivateActivity[label="Succeed"];
+    ActivateFailHumanActivity->PingActivity[label="Fail"];
+    ActivateFailHumanActivity->ResolveTicketsActivity[label="Succeed"];
+    WorkflowExecutionStarted->PingActivity[label=""];
+    ActivateActivity->ActivateFailHumanActivity[label="Fail"];
+    ActivateActivity->ResolveTicketsActivity[label="Succeed"];
+    FixVIPHumanActivity->CheckVIPActivity[label=""];
+    PingActivity->RebootActivity[label="Down"];
+    PingActivity->ToasterActivity[label="Up"];
+    ReplyHumanActivity->WaitDCOActivity[label=""];
+    FreeIpHumanActivity->PingActivity[label="Mistake"];
+    FreeIpHumanActivity->ResolveTicketsActivity[label="Confirm"];
+    RebootActivity->CutTicketActivity[label="Failed"];
+    RebootActivity->ToasterActivity[label="Succeed"];
+    CutTicketActivity->HumanActivity[label="Failed"];
+    CutTicketActivity->WaitDCOActivity[label="Succeed"];
+    ToasterActivity->CheckVIPActivity[label="Healthy"];
+    ToasterActivity->CutTicketActivity[label="UnHealthy"];
+    WaitDCOActivity->ToasterActivity[label="Resolved"];
+    WaitDCOActivity->ReplyHumanActivity[label="NeedReply"];
+    WaitDCOActivity->ReplyHumanActivity[label="Timeout"];
+}
