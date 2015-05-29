@@ -11,3 +11,6 @@ class ToasterWorker(BaseWorker):
             return 'Succeed'
         else:
             return 'Fail'
+
+if __name__ == '__main__':
+    ToasterWorker().run(verbose=True)

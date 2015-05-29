@@ -2,7 +2,13 @@
 import sys
 import os
 import states
+import boto.ses
 
+class Notify:
+    def __init__(self):
+        self.ses = boto.ses.connect_to_region('us-east-1')
+    def developer(self, msg):
+        self.ses.send_email('jindongh@gmail.com', 'ActivityFailed', msg, 'jindongh@gmail.com')
 class TicketAPI:
     def list_tickets(self, hostname):
         # TODO
@@ -16,8 +22,8 @@ class TicketAPI:
 
 class BaseToaster:
     # TODO: call basic toaster api
-    def get_status(self):
-        pass
+    def get_status(self, hostname):
+        return {}
     def is_ssh_able(self, hostname):
         pass
 

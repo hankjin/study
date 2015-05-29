@@ -1,15 +1,24 @@
 import boto.swf.layer2 as swf
 from boto.swf.exceptions import SWFTypeAlreadyExistsError, SWFDomainAlreadyExistsError
-DOMAIN = 'boto_tutorial'
-VERSION = '1.0'
+import config
+import states
 
 registerables = []
-registerables.append(swf.Domain(name=DOMAIN))
-for workflow_type in ('HelloWorkflow', 'SerialWorkflow', 'ParallelWorkflow', 'SubWorkflow'):
-    registerables.append(swf.WorkflowType(domain=DOMAIN, name=workflow_type, version=VERSION, task_list='default'))
+registerables.append(swf.Domain(name=config.DOMAIN))
+for workflow_type in (config.WorkFlowType,):
+    registerables.append(swf.WorkflowType(
+        domain=config.DOMAIN,
+        name=workflow_type,
+        version=config.VERSION,
+        task_list=config.TASKLIST))
 
-for activity_type in ('HelloWorld', 'ActivityA', 'ActivityB', 'ActivityC'):
-    registerables.append(swf.ActivityType(domain=DOMAIN, name=activity_type, version=VERSION, task_list='default'))
+for activity_type in states.Activities:
+    if activity_type.endswith('Activity'):
+        registerables.append(swf.ActivityType(
+            domain=config.DOMAIN,
+            name=activity_type,
+            version=config.VERSION,
+            task_list=config.TASKLIST))
 
 for swf_entity in registerables:
     try:

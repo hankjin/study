@@ -1,5 +1,6 @@
 import boto.swf.layer2 as swf
 
+WorkFlowType = 'FETicketWorkflow'
 DOMAIN = 'sqs_ticket_fe'
 VERSION = '0.9'
 TASKLIST = 'default'

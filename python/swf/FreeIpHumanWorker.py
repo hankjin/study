@@ -7,11 +7,11 @@ Verify This host is unknown host
 
 class FreeIpHumanWorker(HumanWorker):
     def __init__(self):
-        super.__init__(self,
-                'Please confirm free ip',
-                '',
-                20,
-                5)
+        HumanWorker.__init__(self,
+                title='Please confirm free ip',
+                body='',
+                timeout=20,
+                step=5)
     def update_notify_msg(self, context, task):
         self.body = '''
         Hostname:{hostname}

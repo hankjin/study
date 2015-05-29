@@ -1,4 +1,4 @@
-import boto.ses
+import boto.sns
 
 from BaseWorker import BaseWorker
 
@@ -9,7 +9,7 @@ notify operator again if no response after timeout
 '''
 class HumanWorker(BaseWorker):
     def __init__(self, title, body, timeout, step):
-        super.__init__(self)
+        BaseWorker.__init__(self)
         self.title = title
         self.body = body
         self.timeout = timeout

@@ -15,3 +15,5 @@ class CheckVIPWorker(BaseWorker):
         else:
             return 'Fail'
 
+if __name__ == '__main__':
+    CheckVIPWorker().run(verbose=True)

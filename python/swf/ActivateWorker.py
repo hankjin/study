@@ -1,10 +1,10 @@
 from BaseWorker import BaseWorker
 from util import RemoteCommand
 
-class ActivateActivity(BaseWorker):
+class ActivateWorker(BaseWorker):
 
     def __init__(self):
-        super.__init__(self)
+        BaseWorker.__init__(self)
         self.util = RemoteCommand()
     def activate(self, hostname):
         # activate DFDD
@@ -23,3 +23,6 @@ class ActivateActivity(BaseWorker):
 
     def activity(self, context, task):
         return self.activate(context.get_hostname())
+
+if __name__ == '__main__':
+    ActivateWorker().run()

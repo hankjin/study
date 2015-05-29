@@ -9,7 +9,7 @@ class ResolveTicketsWorker(BaseWorker):
         hostname = context.get_hostname()
         ticket_api = TicketAPI()
         # Get related ticket list
-        tickets = ticket_api.list_ticket(hostname)
+        tickets = ticket_api.list_tickets(hostname)
         for ticket in tickets:
             # Resolve ticket
             print 'Resolve ticket %s %s' % (hostname, ticket)

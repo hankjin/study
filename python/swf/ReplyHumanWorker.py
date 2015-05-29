@@ -2,11 +2,11 @@ from HumanWorker import HumanWorker
 
 class ReplyHumanWorker(HumanWorker):
     def __init__(self):
-        super.__init__(self,
-                'Please reply DCO Ticket',
-                '',
-                20,
-                5)
+        HumanWorker.__init__(self,
+                title='Please reply DCO Ticket',
+                body='',
+                timeout=20,
+                step=5)
     def get_status(self, context, task):
         util = TicketAPI()
         ticket = context.get_dco_ticket()
@@ -21,3 +21,6 @@ class ReplyHumanWorker(HumanWorker):
         self.body = 'Hostname:%s\nTicket:%s' % (
                 context.get_hostname(),
                 context.get_dco_ticket())
+
+if __name__ == '__main__':
+    ReplyHumanWorker().run()
