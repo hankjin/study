@@ -36,70 +36,81 @@ import java.util.concurrent.TimeUnit;
  */
 public class InternalDNSCache {
 
-/** Interval to update the cache. */
-private static final int REFRESH_CYCLE_MINUTES = 1;
+    /** Interval to update the cache. */
+    private static final int REFRESH_CYCLE_MINUTES = 1;
 
-/** Expire period, after X hours, the item will be cleaned up from cache. */
-private static final int EXPIRE_HOURS = 24;
+    /** Expire period, after X hours, the item will be cleaned up from cache. */
+    private static final int EXPIRE_HOURS = 24;
 
-/** Retry to access DNS if failed. */
-public static final int MAX_RETRIES = 3;
+    /** Retry to access DNS if failed. */
+    public static final int MAX_RETRIES = 3;
 
-/** DNS resolve timeout, only used when update cache. */
-public static final int RESOLVE_TIMEOUT_SECONDS = 3;
+    /** DNS resolve timeout, only used when update cache. */
+    public static final int RESOLVE_TIMEOUT_SECONDS = 3;
 
-/** singleton instance. */
-private static final InternalDNSCache INSTANCE = new InternalDNSCache();
+    /** singleton instance. */
+    private static final InternalDNSCache INSTANCE = new InternalDNSCache();
 
-/** singleton instance. */
-private InternalDNSCache() {
-store = new InternalDNSCacheStore(
-TimeUnit.MINUTES.toSeconds(REFRESH_CYCLE_MINUTES),
-TimeUnit.HOURS.toSeconds(EXPIRE_HOURS),
-TimeUnit.SECONDS.toMillis(3),
-MAX_RETRIES
-);
-store.start();
-}
-/**
- * On destroy, close the cache refresh thread.
- */
-public void onDestroy() {
-store.interrupt();
-}
+    /**
+     * Singleton method to get instance.
+     * @return singleton of InternalDNSCache.
+     */
+    public static InternalDNSCache getInstance() {
+        return INSTANCE;
+    }
 
-/**
- * Singleton method to get instance.
- * @return singleton of InternalDNSCache.
- */
-public static InternalDNSCache getInstance() {
-return INSTANCE;
-}
+    /** singleton instance. */
+    private InternalDNSCache() {
+        store = new InternalDNSCacheStore(
+                TimeUnit.MINUTES.toSeconds(REFRESH_CYCLE_MINUTES),
+                TimeUnit.HOURS.toSeconds(EXPIRE_HOURS),
+                TimeUnit.SECONDS.toMillis(3),
+                MAX_RETRIES
+                );
+        setInternalDNSCacheStore(store);
+    }
 
-/**
- * DNS cache store.
- */
-private InternalDNSCacheStore store;
+    /**
+     * change store.
+     * @param store customized store.
+     */
+    public void setInternalDNSCacheStore(final InternalDNSCacheStore store) {
+        if (store != null) {
+            store.onDestroy();
+        }
+        this.store = store;
+    }
+    /**
+     * On destroy, close the cache refresh thread.
+     */
+    public void onDestroy() {
+        store.onDestroy();
+    }
 
-/**
- * Get address from cache, it will fall back to DNS when cache miss.
- * @param uri uri which include hostname and port, eg: http://queue.amazonaws.com:8080/.
- * @return resolved ip and port. eg: queue.amazonaws.com/1.2.3.4:8080
- */
-public InetSocketAddress getAddress(final URI uri) {
-return store.getAddress(uri);
-}
+    /**
+     * DNS cache store.
+     */
+    private InternalDNSCacheStore store;
 
-/**
- * Get batch of addresses from cache, it can be used to initialize cache during start up.
- * @param uris URIs of DNS.
- * @return
- */
-public Map<URI, InetSocketAddress> getAddresses(final List<URI> uris) {
-Map<URI, InetSocketAddress> addresses = new HashMap<URI, InetSocketAddress>();
-for (URI uri : uris) {
-addresses.put(uri,  store.getAddress(uri));
-}
-return addresses;
-}
+    /**
+     * Get address from cache, it will fall back to DNS when cache miss.
+     * @param uri uri which include hostname and port, eg: http://queue.amazonaws.com:8080/.
+     * @return resolved ip and port. eg: queue.amazonaws.com/1.2.3.4:8080
+     */
+    public InetSocketAddress getAddress(final URI uri) {
+        return store.getAddress(uri);
+    }
+
+    /**
+     * Get batch of addresses from cache, it can be used to initialize cache during start up.
+     * @param uris URIs of DNS.
+     * @return
+     */
+    public Map<URI, InetSocketAddress> getAddresses(final List<URI> uris) {
+        Map<URI, InetSocketAddress> addresses = new HashMap<URI, InetSocketAddress>();
+        for (URI uri : uris) {
+            addresses.put(uri,  store.getAddress(uri));
+        }
+        return addresses;
+    }
 }
