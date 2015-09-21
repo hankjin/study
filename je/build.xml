@@ -28,6 +28,12 @@
         <jar jarfile="${dist}/lib/je-${DSTAMP}.jar" basedir="${build}" />
     </target>
 
+    <target name="memtest" depends="compile">
+        <mkdir dir="${dbdir}"/>
+        <java classname="net.hankjohn.je.MemTest">
+            <classpath refid="project.class.path"/>
+        </java>
+    </target>
     <target name="run" depends="compile">
         <mkdir dir="${dbdir}"/>
         <java classname="net.hankjohn.je.Test">
