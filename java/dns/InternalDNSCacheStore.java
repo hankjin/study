@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadFactory;
@@ -21,7 +20,9 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
  *  1. Map<URI, InetSocketAddress> dns cache items.
  *  2. BlockingQueue<Future> dns resolve tasks
  * Threads:
- *  1. 
+ *  1. Cancel resolve timeout.
+ *  2. Refresh items
+ *  3. Resolve DNS
  * @author hankjohn
  *
  */
@@ -31,7 +32,8 @@ public class InternalDNSCacheStore {
     private long expireSeconds;
     private long resolveTimeoutMillis;
     private int maxRetries;
-    private ExecutorService executor;
+    private ThreadPoolExecutor executor;
+    private DNSResolver resolver;
     private BlockingQueue<Map.Entry<ResolveURITask,Future<InetSocketAddress>>> tasks;
     /**
      * refresh items + timeout check + resolve(*2)
@@ -51,6 +53,7 @@ public class InternalDNSCacheStore {
         this.expireSeconds = expireSeconds;
         this.resolveTimeoutMillis = resolveTimeoutMillis;
         this.maxRetries = maxRetries;
+        this.resolver = DNSResolver.getInstance();
         final BlockingQueue<Runnable> queue = new ArrayBlockingQueue<>(DNS_RESOLVE_REQUEST_QUEUE);
         ThreadFactory factory = new ThreadFactoryBuilder()
             .setNameFormat("internal-dns-cache-%d")
@@ -60,6 +63,8 @@ public class InternalDNSCacheStore {
                 INTERNAL_DNS_CACHE_THREAD_NUM,
                 0, TimeUnit.SECONDS,
                 queue, factory);
+    }
+    public void start() {
         executor.submit(new CancelResolveTimeoutThread(this));
         executor.submit(new RefreshCacheThread(this));
     }
@@ -71,7 +76,7 @@ public class InternalDNSCacheStore {
     }
     /**
      * Get address.
-     * First check cache, return if it exists, otherwise access DNS and return. 
+     * First check cache, return if it exists, otherwise access DNS and return.
      * @param uri
      * @return not null, but maybe unresolved if it doesn't exist in cache and dns resolve fail.
      */
@@ -80,13 +85,15 @@ public class InternalDNSCacheStore {
         if (address != null) {
             return address;
         } else {
-            return ResolveURITask.getAddressFromDNS(uri, maxRetries);
+            address = resolver.getAddressFromDNS(uri, maxRetries);
+            refreshCache(uri, address);
         }
+        return address;
     }
     /**
      * Get address from cache.
-     * @param uri 
-     * @return null if it doesn't exist, otherwise it is 
+     * @param uri
+     * @return null if it doesn't exist, otherwise a resolved address.
      */
     public InetSocketAddress getAddressFromCache(URI uri) {
         InternalDNSCacheItem item = items.get(uri);
@@ -126,13 +133,28 @@ public class InternalDNSCacheStore {
     Map<URI, InternalDNSCacheItem> getItems() {
         return items;
     }
-    ExecutorService getExecutor() {
+    ThreadPoolExecutor getExecutor() {
         return executor;
     }
     long getCycleSeconds() {
         return cycleSeconds;
     }
+    void setCycleSeconds(long cycleSeconds) {
+        this.cycleSeconds = cycleSeconds;
+    }
     long getExpireSeconds() {
         return expireSeconds;
+    }
+    void setExpireSeconds(long expireSeconds) {
+        this.expireSeconds = expireSeconds;
+    }
+    DNSResolver getResolver() {
+        return resolver;
+    }
+    void setResolver(DNSResolver resolver) {
+        this.resolver = resolver;
+    }
+    void setResolveTimeoutMillis(long resolveTimeoutMillis) {
+        this.resolveTimeoutMillis = resolveTimeoutMillis;
     }
 }

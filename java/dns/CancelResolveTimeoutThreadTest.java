@@ -1,6 +1,7 @@
 package jindongh.dns;
 
 import java.net.InetSocketAddress;
+import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -11,9 +12,22 @@ import org.junit.Test;
 import com.google.common.collect.Maps;
 
 public class CancelResolveTimeoutThreadTest {
-
+	class DelayedResolveURITask extends ResolveURITask {
+		long delayMillis;
+		public DelayedResolveURITask(InternalDNSCacheStore store, URI uri, long delayMillis) {
+			super(store, uri, DNSResolver.getInstance());
+			this.delayMillis = delayMillis;
+		}
+		public InetSocketAddress call() {
+			this.setStarted(true);
+			try {
+				Thread.sleep(delayMillis);
+			} catch (InterruptedException e) {}
+			return super.call();
+		}
+	}
 	private Map.Entry<ResolveURITask, Future<InetSocketAddress>> fakeTaskWithDelay(long delayMillis) throws Exception {
-		// fake a task which will timeout
+		// fake a task which an extra timeout
 		ResolveURITask task = new DelayedResolveURITask(
 				InternalDNSCacheTestUtil.store,
 				InternalDNSCacheTestUtil.SAMPLE_URI,

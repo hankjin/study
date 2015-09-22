@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import com.google.common.annotations.VisibleForTesting;
 /**
  * Internal DNS Cache, used to increase efficiency and fault tolerant.
  * 
@@ -75,10 +77,10 @@ public class InternalDNSCache {
      * @param store customized store.
      */
     public void setInternalDNSCacheStore(final InternalDNSCacheStore store) {
-        if (store != null) {
-            store.onDestroy();
-        }
         this.store = store;
+    }
+    public void start() {
+        store.start();
     }
     /**
      * On destroy, close the cache refresh thread.
@@ -113,4 +115,8 @@ public class InternalDNSCache {
         }
         return addresses;
     }
+    @VisibleForTesting
+        InternalDNSCacheStore getStore() {
+            return store;
+        }
 }
