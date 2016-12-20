@@ -21,3 +21,4 @@ nytprof.out
 **.project
 **.classpath
 **/target/
+nightwatch/tests_output/
