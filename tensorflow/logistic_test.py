@@ -75,3 +75,5 @@ with tf.Session() as sess:
     # Calculate accuracy for 3000 examples
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
     print "Accuracy:", accuracy.eval({x: train_x, y: train_y})
+    print 'Result:',tf.argmax(pred,1).eval({x:test_x})
+
